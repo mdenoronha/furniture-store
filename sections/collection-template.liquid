@@ -1,0 +1,232 @@
+{%- assign limit = section.settings.grid | times: section.settings.rows -%}
+
+{% paginate collection.products by limit %}
+
+<div data-section-id="{{ section.id }}" data-section-type="collection-template">
+  <header class="collection-header">
+    {%- assign is_filter_by_available = false -%}
+    {%- if section.settings.tags_enable and collection.all_tags.size > 0 -%}
+      {%- assign is_filter_by_available = true -%}
+    {%- endif -%}
+
+    {%- assign is_vendor_or_type_collection = false -%}
+    {%- if collection.current_type != blank or collection.current_vendor != blank -%}
+      {%- assign is_vendor_or_type_collection = true -%}
+    {%- endif -%}
+
+    <div class="section-title text-center">
+      <div class="section-title__border"></div>
+        <span class="visually-hidden">{{ 'collections.general.collection_label' | t }}: </span>
+        <h2>{{ collection.title }}</h2>
+      </div>
+
+    {% assign collection_filters = section.settings.filter_types | split: ',' %}
+    {% assign all_active_filters = false %}
+
+    {% for filter in collection_filters %}
+      {% if all_active_filters %}
+        {% break %}
+      {% endif %}
+        {% for tag in collection.all_tags %}
+          {% assign collection_tag = tag | split: '_' %}
+          {% if filter == collection_tag[1] %}
+            {% assign all_active_filters = true %}
+              {% break %}
+          {% endif %}
+        {% endfor %}
+    {% endfor %}
+
+    {% if all_active_filters %}
+    <div class="multifilter-toolbar">
+    {% for filter in collection_filters %}
+      {% assign active_filter = false %}
+        {% for tag in collection.all_tags %}
+          {% assign collection_tag = tag | split: '_' %}
+          {% if filter == collection_tag[1] %}
+            {% assign active_filter = true %}
+              {% break %}
+          {% endif %}
+        {% endfor %}
+    {% if active_filter %}
+      <select class="multifilter-select">
+          <option name="multifilter" value="" disabled selected>{{collection_tag[1] | upcase }}</option>
+          <option name="multifilter" value="">All</option>
+          {% for tag in collection.all_tags %}
+            {% assign collection_tag = tag | split: '_' %}
+            {% if filter == collection_tag[1] %}
+            <option {% if current_tags contains tag %} selected="selected" {% endif %} name="multifilter" value="{{ tag }}">{{ collection_tag[2] | capitalize }}</option>
+            {% endif %}
+          {% endfor %}
+      </select>
+    {% endif %}
+    {% endfor %}
+      <button class="btn btn-red slideshow__btn multifilter__btn" id="multifilter">Filter</button>
+    </div>
+    <div class="multifilter-toolbar multifilter-toolbar--mobile">
+      <button class="btn btn-red slideshow__btn multifilter__btn" id="multifilter">Filter</button>
+    </div>
+
+    {% endif %}
+
+    {% if section.settings.sort_enable %}
+      <div class="filters-toolbar__item-child filters-toolbar__sort">
+        {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
+        <div class="filters-toolbar__input-wrapper filters-toolbar__sort-child select-group">
+          <label class="filters-toolbar__label filters-toolbar__label--sort select-label" for="SortBy">{{ 'collections.sorting.title' | t }}</label>
+          <select name="sort_by" id="SortBy"
+            class="filters-toolbar__input hidden"
+            aria-describedby="a11y-refresh-page-message a11y-selection-message"
+            data-default-sortby="{{ collection.default_sort_by }}"
+          >
+            {%- for option in collection.sort_options -%}
+              <option value="{{ option.value }}" {% if option.value == sort_by %}selected="selected"{% endif %}>{{ option.name }}</option>
+            {%- endfor -%}
+          </select>
+          {% include 'icon-chevron-down' %}
+        </div>
+      </div>
+    {% endif %}
+  </header>
+
+  <div class="page-width" id="Collection">
+      
+      {% assign row = -1 %}
+      <ul class="flex-grid__flex-wrap product-grid">
+        {% for product in collection.products %}
+        {% assign first_block = false %}
+        {% assign divisible_by_four = forloop.index | modulo: 4 %}
+          {% if divisible_by_four == 0 or forloop.first %}    
+            {% assign first_block = true %}
+            {% assign row = row | plus: 1 %}
+          {% endif %}
+
+          {% if first_block %}
+          <div class="row-container row-container__desktop">
+          {% endif %}
+
+          <li data-row="{{row}}" class="{% if first_block %}first_block{% endif %} grid__item--{{section.id}} one-third">
+            {% include 'product-card-grid', max_height: 345 %}
+          </li>
+          {% assign divisible_by_three = forloop.index | modulo: 3 %}
+          {% if divisible_by_three == 0 %}
+          </div>
+          {% endif %}
+        {% endfor %}
+      </ul>
+
+      {% assign row = -1 %}
+      <ul class="flex-grid__flex-wrap product-grid__mobile">
+        {% for product in collection.products %}
+        {% assign first_block = false %}
+        {% assign divisible_by_two = forloop.index | modulo: 2 %}
+          {% if divisible_by_two != 0 or forloop.first %}    
+            {% assign first_block = true %}
+            {% assign row = row | plus: 1 %}
+          {% endif %}
+
+          {% if first_block %}
+          <div class="row-container row-container__mobile">
+          {% endif %}
+
+          <li data-row="{{row}}" class="{% if first_block %}first_block{% endif %} grid__item--{{section.id}} one-half">
+            {% include 'product-card-grid', max_height: 345 %}
+          </li>
+          {% if divisible_by_two == 0 %}
+          </div>
+          {% endif %}
+        {% endfor %}
+      </ul>
+
+    {% if collection.all_products_count == 0 %}
+      <div class="grid__item small--text-center">
+        <p class="text-center">{{ 'collections.general.no_matches' | t }}</p>
+      </div>
+    {% endif %}
+
+    {% if paginate.pages > 1 %}
+      {% include 'pagination' %}
+    {% endif %}
+  </div>
+</div>
+
+{% endpaginate %}
+
+
+{% schema %}
+{
+  "name": "Collection Pages",
+  "max_blocks": 3,
+  "settings": [
+    {
+      "type": "range",
+      "id": "grid",
+      "label": "Products per Row",
+      "default": 4,
+      "min": 2,
+      "max": 5,
+      "step": 1
+    },
+    {
+      "type": "range",
+      "id": "rows",
+      "label": "Rows per page",
+      "default": 2,
+      "min": 2,
+      "max": 8,
+      "step": 1
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_image",
+      "label": "Show Collection Image",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show product vendors",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "sort_enable",
+      "label": "Enable Sorting",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "tags_enable",
+      "label": "Enable tag filtering",
+      "default": true
+    },
+    {
+       "type": "header",
+       "content": "Collection Filters",
+       "info": "List all multifilter tag types here separated by a comma. For example, if products are tagged with color (such as multifilter_color_red and multifilter_color_green) and size (such as multifilter_size_small and multifilter_size_medium) then the input below will be 'color,size'."
+    },
+    {
+      "type": "textarea",
+      "id": "filter_types",
+      "label": "All Collection Filters"
+    }
+  ],
+    "blocks": [
+      {
+        "type": "Images",
+        "name": "Icon Images",
+        "settings": [
+          {
+            "type": "text",
+            "id": "icon_product_text",
+            "label": "Icon Text"
+          },
+          {
+            "type": "image_picker",
+            "id": "icon_product_image",
+            "label": "Icon Image"
+          }
+        ]
+      }
+    ]
+}
+{% endschema %}

@@ -1,0 +1,63 @@
+<div data-section-id="{{ section.id }}" data-section-type="hero-2-section" data-padding-mobile="{{section.settings.mobile-padding}}" data-padding-desktop="{{section.settings.desktop-padding}}" class="hero section-header">
+  <div class="grid">
+
+    <div class="parallax__layer parallax__layer--back">
+      <div class="section-header__large-text--one section-header__large-text">
+        <h2>{{section.settings.hero-text}}</h2>
+      </div>
+      <div class="section-header__large-text--two section-header__large-text">
+        <h2>{{section.settings.hero-text}}</h2>
+      </div>
+      <img class="one-whole" src="{{section.settings.hero-image | img_url: '1200x'}}">
+    </div>
+  </div>
+  <div class="parallax__layer parallax__layer--base">
+    <div class="background-svg background-svg__title background__svg--absolute-button">
+      <a href="{{collections[section.settings.hero-collection].url}}" class="btn">{{section.settings.hero-collection}}</a>
+    </div>
+  </div>
+</div>
+
+
+{% schema %}
+  {
+    "name": "Homepage Carousel",
+    "settings" : [
+      {
+        "type" : "image_picker",
+        "id" : "hero-image",
+        "label" : "Hero Image"
+      },
+      {
+        "type": "collection",
+        "id": "hero-collection",
+        "label": "Hero Collection"
+      },
+      {
+        "type" : "text",
+        "id" : "hero-text",
+        "label": "Hero Text"
+      },
+      {
+        "type": "range",
+        "id": "mobile-padding",
+        "label": "Bottom Spacing for Mobile",
+        "max": 200,
+        "min": 50,
+        "step": 2,
+        "unit": "%",
+        "default": 100
+      },
+      {
+        "type": "range",
+        "id": "desktop-padding",
+        "label": "Bottom Spacing for Desktop",
+        "max": 200,
+        "min": 50,
+        "step": 2,
+        "unit": "%",
+        "default": 100
+      }
+    ]
+  }
+{% endschema %}

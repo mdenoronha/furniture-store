@@ -1,0 +1,141 @@
+<div class="one-whole {% unless product.available %} grid-view-item--sold-out{% endunless %} product-card" data-product-card>
+
+  {% capture img_id %}ProductCardImage-{{ section.id }}-{{ product.id }}{% endcapture %}
+  {% capture wrapper_id %}ProductCardImageWrapper-{{ section.id }}-{{ product.id }}{% endcapture %}
+  {%- assign img_url = product.featured_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+
+  {% case section.blocks.size %}
+    {% when 1 %}
+      {% assign blocks_size = '' %}
+    {% when 2 %}
+      {% assign blocks_size = 'one-half' %}
+    {% when 3 %}
+      {% assign blocks_size = 'one-third' %}
+  {% endcase %}
+
+  {% unless product.featured_image == blank %}
+    {% include 'image-style' with image: product.featured_image, width: max_height, height: max_height, small_style: true, wrapper_id: wrapper_id, img_id: img_id %}
+  {% endunless %}
+
+  <div class="product-card__title--mobile">
+    <div class="h4" aria-hidden="true">{{ product.title }}</div>
+      {% include 'product-price', variant: product %}
+    </div>
+
+  <div class="product-card__image-with-placeholder-wrapper" data-image-with-placeholder-wrapper>
+    <div id="{{ wrapper_id }}" class="grid-view-item__image-wrapper product-card__image-wrapper js">
+      <div style="padding-top:{% unless product.featured_image == blank %}{{ 1 | divided_by: product.featured_image.aspect_ratio | times: 100 }}%{% else %}100%{% endunless %};">
+        <img id="{{ img_id }}"
+              class="grid-view-item__image lazyload"
+              alt="{{ product.featured_image.alt }}"
+              data-src="{{ img_url }}"
+              data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+              data-aspectratio="{{ product.featured_image.aspect_ratio }}"
+              data-sizes="auto"
+              data-image>
+      </div>
+    </div>
+    <div class="placeholder-background placeholder-background--animation" data-image-placeholder></div>
+  </div>
+
+  <noscript>
+    {% capture image_size %}{{ max_height }}x{{ max_height }}{% endcapture %}
+    <img class="grid-view-item__image" src="{{ product.featured_image.src | img_url: image_size, scale: 2 }}" alt="{{ product.featured_image.alt }}" style="max-width: {{ max_height | times: product.featured_image.aspect_ratio }}px;">
+  </noscript>
+  <div class="product-card__text {% unless product.available %}product-card__title--sold-out{% endunless %}">
+    <h4 class="h4 grid-view-item__title product-card__title" aria-hidden="true">{{ product.title }}</h4>
+    <p>{%- if product.selected_or_first_available_variant.compare_at_price -%}<span class="product-card__sale">{{product.selected_or_first_available_variant.compare_at_price | money}}</span><span> </span> {%- endif -%}{%- if product.price_varies -%}From<span> </span>{%- endif -%} {{ product.price | money}}</p>
+  </div>
+</div>
+
+<div class="product-focus">
+
+  <div class="medium-up--one-whole small--one-whole product-card__info">
+  <div class="h4 grid-view-item__title product-card__title" aria-hidden="true">{{ product.title }}</div>
+
+  {% include 'product-price', variant: product %}
+  <div class="product-focus__description">
+    {{ product.description | truncate: 150 }}
+  </div>
+  <div class="flex-grid flex-grid__bottom">
+    <div class="medium-up--one-half small--one-whole">
+      {% form 'product', product, class:form_classes, novalidate: 'novalidate', data-product-form: '', data-product-form-redirect-url: '/cart' %}
+
+    {% unless product.has_only_default_variant %}
+    <div class="selector-wrapper js product-form__item">
+      <select name="id" class="single-option-selector single-option-selector-{{ section.id }} product-form__input" id="ProductSelect-{{ section.id }}">
+        {% for variant in product.variants %}
+          {% if variant.available %}
+            <option {% if variant == product.selected_or_first_available_variant %} selected="selected" {% endif %} value="{{ variant.id }}">
+              {{ variant.title }}
+            </option>
+          {% else %}
+            <option disabled="disabled">{{ variant.title }} - {{ 'products.product.sold_out' | t }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+    </div>
+    {% else %}
+      <select name="id" class="small--hide medium-up--hide single-option-selector single-option-selector-{{ section.id }} product-form__input" id="ProductSelect-{{ section.id }}">
+        {% for variant in product.variants %}
+          {% if variant.available %}
+            <option {% if variant == product.selected_or_first_available_variant %} selected="selected" {% endif %} value="{{ variant.id }}"></option>
+          {% else %}
+            <option disabled="disabled">{{ variant.title }} - {{ 'products.product.sold_out' | t }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+
+    {% endunless %}
+
+    <div class="product-form__error-message-wrapper product-form__error-message-wrapper--hidden" data-error-message-wrapper role="alert">
+      {% include 'icon-error' %} <span class="product-form__error-message" data-error-message>{{ 'products.product.quantity_minimum_message' | t }}</span>
+    </div>
+
+    <div class="product-form__item product-form__item--submit{% if section.settings.enable_payment_button %} product-form__item--payment-button{% endif %}{% if product.has_only_default_variant %} product-form__item--no-variants{% endif %}">
+
+    {% if product.has_only_default_variant and product.available %}
+      <button type="submit" name="add" class="btn product-form__cart-submit" data-add-to-cart>
+        <span data-add-to-cart-text>
+          {{ 'products.product.add_to_cart' | t }}
+        </span>
+      </button>
+    {% elsif product.available != true %}
+      <button type="submit" name="add" disabled="disabled" class="btn product-form__cart-submit" data-add-to-cart>
+        <span data-add-to-cart-text>
+          {{ 'products.product.sold_out' | t }}
+        </span>
+      </button>
+    {% else %}
+      <button type="submit" name="add" class="btn product-form__cart-submit" data-add-to-cart>
+        <span data-add-to-cart-text>
+          {{ 'products.product.add_to_cart' | t }}
+        </span>
+      </button>
+    {% endif %}
+    <a href="{{ product.url }}" class="btn btn-red btn-red--dark slideshow__btn">MORE DETAILS</a>
+    </div>
+      {% endform %}
+    </div>
+    <div class="medium-up--one-half small--one-whole">
+      <div class="product-card__icons">
+        {% for icon in section.blocks %}
+          <div class="{{blocks_size}} product-card__icon">
+            <img
+                class="lazyload"
+                alt="icon"
+                data-src="{{ icon.settings.icon_product_image | img_url: '200x200' }}"
+                data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+                data-aspectratio="{{ icon.settings.icon_product_image.aspect_ratio }}"
+                data-sizes="auto"
+                data-image>
+            <p>{{ icon.settings.icon_product_text }}</p>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div class="row-container__close"><span class="row-container__close-button">X</span></div>
+</div>

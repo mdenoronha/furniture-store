@@ -1,0 +1,44 @@
+<div class="flex-grid flex-grid__space-around article-icons__container">
+  {% for block in section.blocks %}
+    <img class="article-icons__icons grid__item--flex-center one-sixth" src="{{ block.settings.logo | img_url: '300x' }}">
+  {% endfor %}
+</div>
+
+{% schema %}
+
+{
+  "name": "Publication Logos",
+  "max_blocks": 5,
+  "blocks": [
+    {
+      "type": "image",
+      "name": "Publication Logo",
+      "settings": [
+        {
+          "label": "Logo",
+          "id": "logo",
+          "type": "image_picker"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Publication Logos",
+      "category": "Image",
+      "blocks": [
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        }
+      ]
+    }
+  ]
+}
+
+{% endschema %}

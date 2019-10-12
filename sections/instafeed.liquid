@@ -1,0 +1,31 @@
+{% if section.settings.title != blank %}
+<div class="section-title text-center">
+  <div class="section-title__border"></div>
+  <h2>{{ section.settings.title | escape }}</h2>
+</div>
+{% endif %}
+
+<div class="instafeed-section" data-section-id="{{ section.id }}" data-section-type="instafeed-section">
+	<div id="insta-feed" class="feed-slider--{{ section.id }}">
+	</div>
+</div>
+
+{% schema %}
+{
+	"name": "Instafeed",
+	"class": "index-section index-section--flush",
+	"settings": [
+		{
+			"type": "text",
+			"id": "title",
+			"label": "Section Title"
+		}
+	],
+	"presets": [
+		{
+			"name": "Instafeed",
+			"category": "social"
+		}
+	]
+}
+{% endschema %}

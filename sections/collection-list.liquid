@@ -1,0 +1,95 @@
+<div>
+  {% if section.settings.title != blank %}
+    <div class="section-title text-center">
+      <div class="section-title__border"></div>
+      <h2>{{ section.settings.title | escape }}</h2>
+    </div>
+  {% endif %}
+
+  <div class="page-width collection-grid">
+    <ul class="grid grid--uniform">
+      <li class="grid__item small--one-whole {% if section.blocks.size != 1 %}medium-up--one-half{% endif %}" {{ block.shopify_attributes }}>
+        {%- assign first_collection = section.blocks[0] -%}
+        {%- assign collection = collections[first_collection.settings.collection] -%}
+        {%- assign collection_image = first_collection.settings.collection_image -%}
+        {% include 'collection-grid-item' %}
+      </li>
+      {% if section.blocks.size != 1 %}
+      <ul class="grid__item grid__item--no-padding small--one-whole medium-up--one-half">
+      {% for block in section.blocks limit: section.blocks.size %}
+        {% if forloop.first == true %}
+          {% continue %}
+        {% endif %}
+        <li class="grid__item {% if section.blocks.size == 2 %}one-whole{% else %}one-half{% endif %}" {{ block.shopify_attributes }}>
+          {%- assign collection = collections[block.settings.collection] -%}
+          {%- assign collection_image = block.settings.collection_image -%}
+          {% include 'collection-grid-item' %}
+        </li>
+      {% endfor %}
+      </ul>
+      {% endif %}
+    </ul>
+  </div>
+
+  {% if section.blocks.size == 0 %}
+    {% include 'no-blocks' %}
+  {% endif %}
+</div>
+
+
+
+{% schema %}
+{
+  "name": "Collection List",
+  "class": "index-section",
+  "max_blocks": 12,
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "Collection List"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "featured_collection",
+      "name": "Collection",
+      "settings": [
+        {
+          "label": "Collection Image",
+          "id": "collection_image",
+          "type": "image_picker"
+        },
+        {
+          "label": "Collection Title",
+          "id": "collection_text",
+          "type": "text"
+        },
+        {
+          "label": "Collection",
+          "id": "collection",
+          "type": "collection"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection List",
+      "category": "Collection",
+      "blocks": [
+        {
+          "type": "featured_collection"
+        },
+        {
+          "type": "featured_collection"
+        },
+        {
+          "type": "featured_collection"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

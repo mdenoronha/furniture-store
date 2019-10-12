@@ -1,0 +1,67 @@
+<div class="page-width" data-section-id="{{ section.id }}" data-section-type="text-section" data-padding-mobile="{{section.settings.mobile-padding}}" data-padding-desktop="{{section.settings.desktop-padding}}">
+	<div class="text-center">
+		<h2 class="h1">{{ section.settings.text-title }}</h2>
+		<p>{{ section.settings.homepage-text }}</p>
+		<div class="grid--flex grid--space-around grid--no-gutters">
+			{%- for block in section.blocks -%}
+				<div class="grid__item one-sixth">
+					<img src="{{ block.settings.image_logo | img_url: '300x' }}">
+				</div>
+			{%- endfor -%}
+		</div>
+	</div>
+</div>
+
+{% schema %}
+{
+	"name": "Homepage Text",
+	"settings": [
+		{
+			"type": "text",
+			"id": "text-title",
+			"label": "Homepage Title",
+			"default": "Who are we?"
+		},
+		{
+			"type": "textarea",
+			"id": "homepage-text",
+			"label": "Homepage Text",
+			"default": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
+		},
+		{
+		  "type": "range",
+		  "id": "mobile-padding",
+		  "label": "Bottom Spacing for Mobile",
+		  "max": 200,
+		  "min": 0,
+		  "step": 2,
+		  "unit": "%",
+		  "default": 100
+		},
+		{
+		  "type": "range",
+		  "id": "desktop-padding",
+		  "label": "Bottom Spacing for Desktop",
+		  "max": 200,
+		  "min": 0,
+		  "step": 2,
+		  "unit": "%",
+		  "default": 100
+		}
+	],
+	"blocks": [
+		{
+			"type": "image",
+			"name": "logo image",
+			"settings": [
+				{
+					"type": "image_picker",
+					"id": "image_logo",
+					"label": "Logo Image"
+				}
+			]
+		}
+	]
+}
+
+{% endschema %}
