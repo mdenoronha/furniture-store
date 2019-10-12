@@ -1,4 +1,4 @@
-{%- assign limit = section.settings.grid | times: section.settings.rows -%}
+{%- assign limit = section.settings.grid -%}
 
 {% paginate collection.products by limit %}
 
@@ -94,7 +94,7 @@
       <ul class="flex-grid__flex-wrap product-grid">
         {% for product in collection.products %}
         {% assign first_block = false %}
-        {% assign divisible_by_four = forloop.index | modulo: 4 %}
+        {% assign divisible_by_four = forloop.index | minus: 1 | modulo: 3 %}
           {% if divisible_by_four == 0 or forloop.first %}    
             {% assign first_block = true %}
             {% assign row = row | plus: 1 %}
@@ -105,6 +105,7 @@
           {% endif %}
 
           <li data-row="{{row}}" class="{% if first_block %}first_block{% endif %} grid__item--{{section.id}} one-third">
+            <p>{{forloop.index}}</p>
             {% include 'product-card-grid', max_height: 345 %}
           </li>
           {% assign divisible_by_three = forloop.index | modulo: 3 %}
@@ -160,10 +161,10 @@
     {
       "type": "range",
       "id": "grid",
-      "label": "Products per Row",
-      "default": 4,
+      "label": "Products per Page",
+      "default": 9,
       "min": 2,
-      "max": 5,
+      "max": 12,
       "step": 1
     },
     {
