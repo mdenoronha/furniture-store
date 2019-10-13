@@ -32,7 +32,7 @@
 
     <div class="collection-grid-item__title-wrapper">
       <div class="collection-grid-item__title h3">
-        <div class="btn btn-red slideshow__btn" tabindex="-1">{{ collection.title }}</div>
+        <div class="btn btn-red slideshow__btn" tabindex="-1">{% if collection_title %}{{collection_title}}{% else %}{{ collection.title }}{% endif %}</div>
       </div>
     </div>
 
