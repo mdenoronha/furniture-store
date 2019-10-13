@@ -1860,39 +1860,6 @@ theme.Slideshow = (function() {
     this.$controls.on('keyup', keyboardNavigation.bind(this));
     this.$textWrapperMobile.on('keyup', keyboardNavigation.bind(this));
 
-    // When an element in the slider is focused
-    // pause slideshow and set aria-live.
-    // this.$wrapper
-    //   .on(
-    //     'focusin',
-    //     function(evt) {
-    //       if (!this.$wrapper.has(evt.target).length) {
-    //         return;
-    //       }
-
-    //       $list.attr('aria-live', 'polite');
-    //       if (this.autorotate) {
-    //         $slider.slick('slickPause');
-    //       }
-    //     }.bind(this)
-    //   )
-    //   .on(
-    //     'focusout',
-    //     function(evt) {
-    //       if (!this.$wrapper.has(evt.target).length) {
-    //         return;
-    //       }
-
-    //       $list.removeAttr('aria-live');
-    //       if (this.autorotate) {
-    //         // Only resume playing if the user hasn't paused using the pause
-    //         // button
-    //         if (!this.$pause.is('.is-paused')) {
-    //           $slider.slick('slickPlay');
-    //         }
-    //       }
-    //     }.bind(this)
-    //   );
 
     // Add arrow key support when focused
     if (this.$dots) {
@@ -2016,14 +1983,8 @@ theme.Slideshow = (function() {
     var $currentTextContent = this.$textWrapperMobile.find(
       currentTextContentSelector
     );
-    // if (
-    //   !$currentTextContent.length &&
-    //   this.$slideshow.find(selectors.slides).length === 1
-    // ) {
-    //   this.$textWrapperMobile.hide();
-    // } else {
-    //   this.$textWrapperMobile.show();
-    // }
+    console.log(slideIndex)
+    console.log($currentTextContent)
     $allTextContent.hide().removeClass('slick-active-mobile');
     $currentTextContent.show().addClass('slick-active-mobile');
   };
