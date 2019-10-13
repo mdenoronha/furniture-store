@@ -60,10 +60,10 @@
       </select>
     {% endif %}
     {% endfor %}
-      <button class="btn btn-red slideshow__btn multifilter__btn" id="multifilter">Filter</button>
+      <button class="btn btn-red slideshow__btn multifilter__btn multifilter">Filter</button>
     </div>
     <div class="multifilter-toolbar multifilter-toolbar--mobile">
-      <button class="btn btn-red slideshow__btn multifilter__btn" id="multifilter">Filter</button>
+      <button class="btn btn-red slideshow__btn multifilter__btn multifilter">Filter</button>
     </div>
 
     {% endif %}
@@ -105,7 +105,6 @@
           {% endif %}
 
           <li data-row="{{row}}" class="{% if first_block %}first_block{% endif %} grid__item--{{section.id}} one-third">
-            <p>{{forloop.index}}</p>
             {% include 'product-card-grid', max_height: 345 %}
           </li>
           {% assign divisible_by_three = forloop.index | modulo: 3 %}

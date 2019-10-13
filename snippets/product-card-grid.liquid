@@ -54,8 +54,11 @@
   <div class="h4 grid-view-item__title product-card__title" aria-hidden="true">{{ product.title }}</div>
 
   {% include 'product-price', variant: product %}
-  <div class="product-focus__description">
+  <div class="product-focus__description large-up--hide product-focus__description--medium">
     {{ product.description | truncate: 150 }}
+  </div>
+  <div class="product-focus__description large-up--show product-focus__description--large narrowscreen--hide small--hide medium--hide">
+    {{ product.description | truncate: 300 }}
   </div>
   <div class="flex-grid flex-grid__bottom">
     <div class="medium-up--one-half small--one-whole">
@@ -67,10 +70,17 @@
         {% for variant in product.variants %}
           {% if variant.available %}
             <option {% if variant == product.selected_or_first_available_variant %} selected="selected" {% endif %} value="{{ variant.id }}">
-              {{ variant.title }}
+              {% for product_option in product.options_with_values %}
+                {% assign variant_option = 'option' | append: forloop.index %}
+                {{ product_option.name }}: {{ variant[variant_option] }}
+              {% endfor %}
             </option>
           {% else %}
-            <option disabled="disabled">{{ variant.title }} - {{ 'products.product.sold_out' | t }}</option>
+            <option disabled="disabled">{% for product_option in product.options_with_values %}
+                {% assign variant_option = 'option' | append: forloop.index %}
+                {{ product_option.name }}: {{ variant[variant_option] }}
+              {% endfor %}
+               {{ 'products.product.sold_out' | t }}</option>
           {% endif %}
         {% endfor %}
       </select>
